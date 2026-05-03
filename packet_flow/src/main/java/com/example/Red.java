@@ -1,22 +1,24 @@
 package com.example;
 
+import com.TDA.Implementaciones.Cola;
+import com.TDA.Implementaciones.ListaEnlazada;
 
 public class Red {
 
     private int capacidadMax;
     private int tamMaxPaquete;
     private Cola<Paquete> colaTransmision;
-    private Lista<Paquete> listaTransito;
-    private Lista<Paquete> bufferRecepcion;
-    private Lista<Mensaje> mensajes;
+    private ListaEnlazada<Paquete> listaTransito;
+    private ListaEnlazada<Paquete> bufferRecepcion;
+    private ListaEnlazada<Mensaje> mensajes;
 
     public Red(int capacidadMax, int tamMaxPaquete) {
         this.capacidadMax = capacidadMax;
         this.tamMaxPaquete = tamMaxPaquete;
         this.colaTransmision = new Cola<>();
-        this.listaTransito = new Lista<>();
-        this.bufferRecepcion = new Lista<>();
-        this.mensajes = new Lista<>();
+        this.listaTransito = new ListaEnlazada<>();
+        this.bufferRecepcion = new ListaEnlazada<>();
+        this.mensajes = new ListaEnlazada<>();
     }
 
     
@@ -36,15 +38,15 @@ public class Red {
         return colaTransmision;
     }
 
-    public Lista<Paquete> getListaTransito() {
+    public ListaEnlazada<Paquete> getListaTransito() {
         return listaTransito;
     }
 
-    public Lista<Paquete> getBufferRecepcion() {
+    public ListaEnlazada<Paquete> getBufferRecepcion() {
         return bufferRecepcion;
     }
 
-    public Lista<Mensaje> getMensajes() {
+    public ListaEnlazada<Mensaje> getMensajes() {
         return mensajes;
     }
 }
