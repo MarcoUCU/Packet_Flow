@@ -48,6 +48,7 @@ public class Mensaje {
             }
             
         }
+    return count;
     }
 
     public int cantEnTransito() {
