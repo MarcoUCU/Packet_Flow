@@ -42,8 +42,8 @@ public class Mensaje {
 
     public int cantPendientes() {
         int count = 0;
-        for (Paquete paquete : paquetes) {
-            if (paquete.getEstadoPaquete() == EstadoPaquete.PENDIENTE) {
+        for (int i = 0; i < paquetes.tamanio(); i++) {
+            if (paquetes.obtener(i).getEstadoPaquete() == EstadoPaquete.PENDIENTE) {
                 count++;
             }
             
