@@ -28,22 +28,26 @@ public class Menu {
                     break;
 
                 case 3:
-                    avanzarPaso();
+                    enviarSiguiente();
                     break;
 
                 case 4:
-                    reconstruirMensaje();
+                    recibirPaquete();
                     break;
 
                 case 5:
-                    eliminarMensaje();
+                    reconstruirMensaje();
                     break;
 
                 case 6:
-                    consultarEstado();
+                    eliminarMensaje();
                     break;
 
                 case 7:
+                    consultarEstado();
+                    break;
+
+                case 8:
                     listarMensajes();
                     break;
 
@@ -64,11 +68,12 @@ public class Menu {
         System.out.println("\n===== PACKET FLOW =====");
         System.out.println("1. Crear red");
         System.out.println("2. Crear mensaje");
-        System.out.println("3. Avanzar paso");
-        System.out.println("4. Reconstruir mensaje");
-        System.out.println("5. Eliminar mensaje");
-        System.out.println("6. Consultar estado");
-        System.out.println("7. Listar mensajes");
+        System.out.println("3. Enviar mensaje a tránsito");
+        System.out.println("4. Recibir paquete");
+        System.out.println("5. Reconstruir mensaje");
+        System.out.println("6. Eliminar mensaje");
+        System.out.println("7. Consultar estado");
+        System.out.println("8. Listar mensajes");
         System.out.println("0. Salir");
     }
 
@@ -93,8 +98,13 @@ public class Menu {
         System.out.println("Mensaje creado.");
     }
 
-    private void avanzarPaso() {
-        String resultado = simulador.avanzarPaso();
+    private void enviarSiguiente() {
+        String resultado = simulador.enviarSiguiente();
+        System.out.println(resultado);
+    }
+
+    private void recibirPaquete() {
+        String resultado = simulador.recibirPaquete();
         System.out.println(resultado);
     }
 

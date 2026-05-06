@@ -43,68 +43,86 @@ public class Simulador {
         return "Mensaje: " + identificador + " creado y fragmentado en "
                 + paquetes.tamanio() + " paquetes.";
     }
- public void crearRed(int capacidadMax, int tamMaxPaquete) {
-    this.red = new Red(capacidadMax, tamMaxPaquete);
-}
-    // Avanzar un paso de la simluacion implica: 1- Mover un paquete desde ColaTransmision a Transito (si hay espacio)
-    //2: Mover un paquete aleatorio de transito a recepcion
     
-    public String avanzarPaso() {
-        StringBuilder resultado = new StringBuilder();
- 
-        // 1
-        resultado.append(pasarATransito());
- 
-        // 2
-        resultado.append(pasarARecepcion());
- 
-        if (resultado.length() == 0) {
-            return "No hay paquetes para procesar.";
+    public void crearRed(int capacidadMax, int tamMaxPaquete) {
+        this.red = new Red(capacidadMax, tamMaxPaquete);
+    }
+    
+    // Envía el Mensaje completo con mayor prioridad desde la cola de transmisión
+    public String enviarSiguiente() {
+        ListaEnlazada<Mensaje> mensajes = red.getMensajes();
+        Mensaje elegido = null;
+
+        for (int i = 0; i < mensajes.tamanio(); i++) {
+            Mensaje m = mensajes.obtener(i);
+            if (m.cantPendientes() > 0) {
+                if (elegido == null || m.getPrioridad() > elegido.getPrioridad()) {
+                    elegido = m;
+                }
+            }
         }
- 
-        return resultado.toString();
+
+        if (elegido == null) {
+            return "No hay mensajes pendientes para enviar.";
+        }
+
+        // Sacar de la cola solo los paquetes de este mensaje
+        String identificador = elegido.getIdentificador();
+        ListaEnlazada<Paquete> paquetesAEnviar = new ListaEnlazada<>();
+        int tamanioCola = red.getColaTransmision().tamanio();
+        for (int i = 0; i < tamanioCola; i++) {
+            Paquete p = red.getColaTransmision().desencolar();
+            if (p.getIdMensaje().equals(identificador)) {
+                paquetesAEnviar.agregar(p);
+            } else {
+                red.getColaTransmision().encolar(p);
+            }
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("Enviando mensaje \"").append(identificador)
+        .append("\" (prioridad: ").append(elegido.getPrioridad()).append(")\n");
+        int enviados = 0;
+        for (int i = 0; i < paquetesAEnviar.tamanio(); i++) {
+            Paquete p = paquetesAEnviar.obtener(i);
+            if (red.hayEspacioEnTransito()) {
+                p.setEstado(EstadoPaquete.EN_TRANSITO);
+                red.getListaTransito().agregar(p);
+                enviados++;
+                sb.append(p).append(" pasó a TRÁNSITO.\n");
+            } else {
+                red.getColaTransmision().encolar(p);
+                sb.append("Red saturada: ").append(p).append(" volvió a la cola.\n");
+            }
+        }
+
+        sb.append("Enviados: ").append(enviados).append("/")
+        .append(paquetesAEnviar.tamanio()).append(" paquetes.");
+        return sb.toString();
     }
  
-    // Mueve desde ColaTransmision a tránsito, si hay lugar. (1)
-
-    private String pasarATransito() {
-        if (red.getColaTransmision().esVacio()) {
-            return "";
-        }
-        if (!red.hayEspacioEnTransito()) {
-            return "Red saturada: no hay espacio en tránsito.\n";
-        }
- 
-        Paquete paquete = red.getColaTransmision().desencolar();
-        paquete.setEstado(EstadoPaquete.EN_TRANSITO);
-        red.getListaTransito().agregar(paquete);
- 
-        return paquete + " pasó a TRÁNSITO.\n";
-    }
- 
-    // Mueve un paquete random de tránsito y lo mueve a recepción (si no se pierde)
-
-    private String pasarARecepcion() {
+    // Selecciona un paquete random de tránsito y lo mueve a recepción/perdido
+    
+    public String recibirPaquete() {
         if (red.getListaTransito().esVacio()) {
-            return "";
+            return "No hay paquetes en tránsito.";
         }
  
-        // Elige un paquete random (esto es lo que simula la pérdida de paquetes)
+        // Elegir un paquete aleatorio (simula desorden)
         int indice = random.nextInt(red.getListaTransito().tamanio());
         Paquete paquete = red.getListaTransito().eliminar(indice);
  
         // Decidir si se pierde o llega
-        // random.nextDouble() da un numero entre 0.0 y 1.0, si cae abajo de el parámetro
-        // probabilidadPerdida, el paquete se marca como perdido y no entra en el buffer de recepción
         if (random.nextDouble() < probabilidadPerdida) {
             paquete.setEstado(EstadoPaquete.PERDIDO);
-            return "<- " + paquete + " se PERDIÓ en tránsito.\n";
+            return "<- " + paquete + " se PERDIÓ en tránsito.";
         } else {
             paquete.setEstado(EstadoPaquete.RECIBIDO);
             red.getBufferRecepcion().agregar(paquete);
-            return "<- " + paquete + " llegó al BUFFER DE RECEPCIÓN.\n";
+            return "<- " + paquete + " llegó al BUFFER DE RECEPCIÓN.";
         }
     }
+    
  
     // Reconstruye (o no) un mensaje a partir de los paquetes recibidos
     public String reconstruirMensaje(String identificador) {
