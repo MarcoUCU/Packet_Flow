@@ -27,13 +27,13 @@ public class SimuladorTest {
     }
 
     @Test
-    public void testAvanzarPasoMueveAPaTransito() {
+    public void testEnviarSiguienteMueveATransito() {
         Simulador sim = new Simulador(5, 3, 0.0);
 
         sim.crearMensaje("msg1", "hola", 1);
-        sim.avanzarPaso();
+        sim.enviarSiguiente();
 
-        assertTrue(sim.getRed().getListaTransito().tamanio() >= 0);
+        assertTrue(sim.getRed().getListaTransito().tamanio() > 0);
     }
 
     @Test
@@ -41,27 +41,28 @@ public class SimuladorTest {
         Simulador sim = new Simulador(10, 2, 0.0);
 
         sim.crearMensaje("msg1", "hola", 1);
+        sim.enviarSiguiente();
 
-        for (int i = 0; i < 100; i++) {
-            sim.avanzarPaso();
+        // Recibir todos los paquetes (prob. de pérdida = 0.0, llegan todos)
+        while (sim.getRed().getListaTransito().tamanio() > 0) {
+            sim.recibirPaquete();
         }
 
         String res = sim.reconstruirMensaje("msg1");
-    
-        assertTrue(
-            res.contains("Mensaje reconstruido") ||
-            res.contains("No se puede reconstruir")
-        );
-}
+
+        assertTrue(res.contains("Mensaje reconstruido"));
+    }
 
     @Test
     public void testReconstruirMensajeIncompleto() {
         Simulador sim = new Simulador(5, 2, 1.0);
 
         sim.crearMensaje("msg1", "hola", 1);
+        sim.enviarSiguiente();
 
-        for (int i = 0; i < 10; i++) {
-            sim.avanzarPaso();
+        // Recibir paquetes (prob. de pérdida = 1.0, se pierden todos)
+        while (sim.getRed().getListaTransito().tamanio() > 0) {
+            sim.recibirPaquete();
         }
 
         String res = sim.reconstruirMensaje("msg1");
