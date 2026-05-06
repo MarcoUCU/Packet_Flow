@@ -3,40 +3,42 @@ package com.TDA.Implementaciones;
 import com.TDA.TDACola;
 
 public class Cola<T> extends ListaEnlazada<T> implements TDACola<T> {
-    Nodo<T> frente; // primero
-    Nodo<T> cola;   // ultimo
+    Nodo<T> cola;   //ultimo
+    int tamanio;
+    //cabeza es el primer nodo, heredado de ListaEnlazada
     
     public void encolar(T elem){
         Nodo<T> nuevo = new Nodo<>(elem);
         
-        if(frente == null){
-            frente = nuevo;
+        if(cabeza == null){
+            cabeza = nuevo;
             cola = nuevo;
         } else {
             cola.setSiguiente(nuevo);
             cola = nuevo;
         }
+         tamanio++;
     }
 
     public T frente(){
-        if(frente == null){
+        if(cabeza == null){
             throw new RuntimeException("Cola vacia");
         }
-        return frente.getDato();
+        return cabeza.getDato();
     }
 
     public T desencolar() {
-        if (frente == null) {
+        if (cabeza == null) {
             return null; 
         }
 
-        T valor = frente.getDato();
-        frente = frente.getSiguiente();
+        T valor = cabeza.getDato();
+        cabeza = cabeza.getSiguiente();
 
-        if(frente == null){
+        if(cabeza == null){
             cola = null;
         }
-
+         tamanio--;
         return valor;
     }
 }

@@ -43,9 +43,11 @@ public class Simulador {
         return "Mensaje: " + identificador + " creado y fragmentado en "
                 + paquetes.tamanio() + " paquetes.";
     }
- 
+ public void crearRed(int capacidadMax, int tamMaxPaquete) {
+    this.red = new Red(capacidadMax, tamMaxPaquete);
+}
     // Avanzar un paso de la simluacion implica: 1- Mover un paquete desde ColaTransmision a Transito (si hay espacio)
-    // 2: Mover un paquete aleatorio de transito a recepcion
+    //2: Mover un paquete aleatorio de transito a recepcion
     
     public String avanzarPaso() {
         StringBuilder resultado = new StringBuilder();
@@ -114,7 +116,7 @@ public class Simulador {
         if (!mensaje.estaCompleto()) {
             return "No se puede reconstruir el mensaje " + identificador + ". Se recibieron: "
                     + mensaje.cantRecibidos() + "/" + mensaje.getPaquetes().tamanio()
-                    + " paquetes." + mensaje.cantPerdidos();
+                    + " paquetes." + " perdidos: " + mensaje.cantPerdidos();
         }
  
         // Reordenar paquetes por número de secuencia y reconstruir
@@ -122,7 +124,7 @@ public class Simulador {
         String[] fragmentos = new String[paquetes.tamanio()];
         for (int i = 0; i < paquetes.tamanio(); i++) {
             Paquete p = paquetes.obtener(i);
-            fragmentos[p.getNumSecuencia()] = p.getFragmento();
+            fragmentos[p.getNumSecuencia()-1] = p.getFragmento();
         }
  
         StringBuilder reconstruido = new StringBuilder();
