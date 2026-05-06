@@ -25,6 +25,10 @@ public class ListaEnlazada<T> implements TDALista<T> {
         actual.setSiguiente(nuevo);
     }
 
+    public Nodo<T> getCabeza(){
+        return this.cabeza;
+    }
+
     @Override
     public void agregar(int index, T elem) {
         if (index < 0 || index > tamanio()){

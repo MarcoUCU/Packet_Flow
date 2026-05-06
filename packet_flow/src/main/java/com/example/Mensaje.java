@@ -1,6 +1,7 @@
 package com.example;
 
 import com.TDA.Implementaciones.ListaEnlazada;
+import com.TDA.Implementaciones.Nodo;
 
 public class Mensaje {
     private String identificador;
@@ -41,14 +42,16 @@ public class Mensaje {
     }
 
     public int cantPendientes() {
+        Nodo<Paquete> actual = paquetes.getCabeza();
         int count = 0;
-        for (int i = 0; i < paquetes.tamanio(); i++) {
-            if (paquetes.obtener(i).getEstadoPaquete() == EstadoPaquete.PENDIENTE) {
+
+        while (actual != null) {
+            if (actual.getDato().getEstadoPaquete() == EstadoPaquete.PENDIENTE) {
                 count++;
             }
-            
+            actual = actual.getSiguiente();
         }
-    return count;
+        return count;
     }
 
     public int cantEnTransito() {
